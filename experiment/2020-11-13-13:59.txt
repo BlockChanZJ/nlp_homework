@@ -1,3 +1,4 @@
+## 训练结果
 Test Loss:   1.1,  Test Acc: 67.21%
 Precision, Recall and F1-Score...
               precision    recall  f1-score   support
@@ -29,3 +30,7 @@ Confusion Matrix...
  [  0   0   0   0   0   1 373   0 619   7]
  [  0   2   0   1   1  29 374   0   7 586]]
 
+## 方法
+0.73957657343
+方法二的type=1
+"财经" : 30, "时政" : 30, "房产" : 30, "科技" : 25, "教育" : 30, "时尚" : 30, "游戏" : 15, "家居" : 30, "体育" : 40, "娱乐" : 30, 
