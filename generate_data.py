@@ -106,6 +106,9 @@ def filter_stop_words(para):
     # para = para.replace('\n', '')
     para = para.replace('\u3000', '')
     para = para.replace('\xa0', '')
+    para = para.replace('\xad', '')
+    from stopWord.stop_word import del_stop_word
+    del_stop_word(para)
     return para
 
 # 把很长的一段话分成符合bert长度要求的若干段话
@@ -148,7 +151,7 @@ def read_cnews_txt(input_file):
                 continue
             data.append((y, label2num[x]))
     print('test_data : ')
-    print(data)
+    # print(data)
     return data
 
 def main():
@@ -157,6 +160,7 @@ def main():
 
     data = []
 
+    print('filter stop words ...')
     # 切割段落生成多个data
     for id, label, para in labeled_data:
         if cut_type == True:
@@ -169,8 +173,8 @@ def main():
             if x in token_ends:
                 continue
             data.append((x, label2num[label]))
-        print(para)
-
+        # print(para)
+    print('Done!')
 
     print('\nwriting class.txt ...')
     # 写class.txt
