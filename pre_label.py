@@ -9,7 +9,7 @@ import sys
 
 data_path = './real/data/'
 
-tiny_mode = True
+tiny_mode = False
 tiny_pre = 'tiny_'
 
 keyword_num = {
@@ -102,19 +102,19 @@ game_set = unlabeled_data[unlabeled_data['label_content']=='游戏']
 # print('\n' * 10)
 # print(game_set)
 
-game_set1 = game_set.loc[:1000, ['id', 'label_content', 'content']]
+game_set1 = game_set.loc[:, ['id', 'label_content', 'content']]
 game_set1.columns = ['id', 'class_label', 'content']
 dataset = dataset.append(game_set1, ignore_index=True)
 
 # 增加娱乐类别的数据
 joy_set = unlabeled_data[unlabeled_data['label_content']=='娱乐']
-joy_set1 = joy_set.loc[:1000, ['id', 'label_content', 'content']]
+joy_set1 = joy_set.loc[:, ['id', 'label_content', 'content']]
 joy_set1.columns = ['id', 'class_label', 'content']
 dataset = dataset.append(joy_set1, ignore_index=True)
 
 # 增加体育类别的数据
 sports_set = unlabeled_data[unlabeled_data['label_content']=='体育']
-sports_set1 = sports_set.loc[:1000, ['id', 'label_content', 'content']]
+sports_set1 = sports_set.loc[:, ['id', 'label_content', 'content']]
 sports_set1.columns = ['id', 'class_label', 'content']
 dataset = dataset.append(sports_set1, ignore_index=True)
 
@@ -135,13 +135,15 @@ with open(data_path+'labeled_data_with_10_classes.csv', 'r') as fin:
 label_count = {}
 with open(data_path+'labeled_data_with_10_classes.csv', 'w') as fout:
     fout.write(firstline)
+    cnt = 0
     for line in lines:
-        fout.write(line)
         pos = line.find(',')
+        fout.write(str(cnt) + line[pos:])
         label = line[pos+1:pos+3]
         if label in label_count:
 
             label_count[label] += 1
         else:
             label_count[label] = 1
+        cnt += 1
 print(label_count)

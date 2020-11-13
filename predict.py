@@ -5,7 +5,7 @@ import time
 from utils import build_iterator, get_time_dif
 from importlib import import_module
 from tqdm import tqdm
-from real.data.generate_data import cut_para
+from generate_data import cut_para
 
 
 PAD, CLS = '[PAD]', '[CLS]'  # padding符号, bert中综合信息符号
@@ -330,7 +330,7 @@ def cut_paras_method(x, config, dataset, type):
     # 准备预测数据集
     start_time = time.time()
     predict_model = Predict_Cut_Paras(dataset=dataset, config=config, type=type)
-    predict_model.build_dataset(path=dataset + '/data/tiny_data.csv')
+    predict_model.build_dataset(path=dataset + '/data/test_data.csv')
     time_dif = get_time_dif(start_time)
     print('Time usage:', time_dif)
 

@@ -132,6 +132,7 @@ def cut_para (para):
 # 不切割只过滤停用词
 def filter_para(para):
     para = filter_stop_words(para)
+    para = para.replace('\n','')
     return [para]
 
 def read_cnews_txt(input_file):
