@@ -119,3 +119,29 @@ sports_set1.columns = ['id', 'class_label', 'content']
 dataset = dataset.append(sports_set1, ignore_index=True)
 
 dataset.to_csv(data_path+'labeled_data_with_10_classes.csv')
+
+firstline = ""
+lines = []
+with open(data_path+'labeled_data_with_10_classes.csv', 'r') as fin:
+    cnt = 0
+    for line in fin:
+        cnt += 1
+        if cnt == 1:
+            firstline = line[1:]
+            continue
+        pos = line.find(',')
+        line = line[pos+1:]
+        lines.append(line)
+label_count = {}
+with open(data_path+'labeled_data_with_10_classes.csv', 'w') as fout:
+    fout.write(firstline)
+    for line in lines:
+        fout.write(line)
+        pos = line.find(',')
+        label = line[pos+1:pos+3]
+        if label in label_count:
+
+            label_count[label] += 1
+        else:
+            label_count[label] = 1
+print(label_count)

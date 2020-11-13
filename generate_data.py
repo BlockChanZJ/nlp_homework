@@ -43,6 +43,9 @@ train_data_percent = 0.8
 dev_data_percent = 0.1
 test_data_percent = 0.1
 
+# 对数据集切割 还是 不切割
+cut_type = False
+
 
 # [(id, class_name, para)]
 def read_labeled_csv(input_filename):
@@ -79,10 +82,8 @@ def read_unlabeled_csv(input_filename):
             data.append((id, text))
     return data
 
-# 把很长的一段话分成符合bert长度要求的若干段话
-def cut_para (para):
-    if len(para) < max_length:
-        return para
+# 过滤停用词
+def filter_stop_words(para):
     # punc = '~`!#$%^&*()_+-=|\';":/.,?><~·！@#￥%……&*（）——+-=“：’；、。，？》《{}'
     # para = jieba.cut(re.sub(r"[%s]+" % punc, "", content), cut_all=False)
     para = re.sub('(\u3000{2})([^”’])', r"\1\n\2", para)  # 全角空白符
@@ -105,6 +106,15 @@ def cut_para (para):
     # para = para.replace('\n', '')
     para = para.replace('\u3000', '')
     para = para.replace('\xa0', '')
+    return para
+
+# 把很长的一段话分成符合bert长度要求的若干段话
+def cut_para (para):
+    if len(para) < max_length:
+        para = filter_stop_words(para)
+        para = list(map(str, para.split('\n')))
+        return para
+    para = filter_stop_words(para)
     para = list(map(str,para.split('\n')))
     ans = []
     i = 0
@@ -119,6 +129,11 @@ def cut_para (para):
         i += 1
     return ans
 
+# 不切割只过滤停用词
+def filter_para(para):
+    para = filter_stop_words(para)
+    return [para]
+
 def read_cnews_txt(input_file):
     data = []
     with open(input_file, 'r') as fin:
@@ -130,7 +145,6 @@ def read_cnews_txt(input_file):
             y = y.replace('\xa0','')
             if len(y) < min_length:
                 continue
-            # print(x, len(x))
             data.append((y, label2num[x]))
     print('test_data : ')
     print(data)
@@ -138,14 +152,16 @@ def read_cnews_txt(input_file):
 
 def main():
 
-    labeled_data = read_labeled_csv('labeled_data_with_10_classes.csv')
-    unlabeled_data = read_unlabeled_csv('unlabeled_data.csv')
+    labeled_data = read_labeled_csv('real/data/labeled_data_with_10_classes.csv')
 
     data = []
 
     # 切割段落生成多个data
     for id, label, para in labeled_data:
-        para = cut_para(para)
+        if cut_type == True:
+            para = cut_para(para)
+        else:
+            para = filter_para(para)
         for x in para:
             if len(x) < min_length:
                 continue
@@ -157,22 +173,17 @@ def main():
 
     print('\nwriting class.txt ...')
     # 写class.txt
-    with open('class.txt', 'w') as fout:
+    with open('real/data/class.txt', 'w') as fout:
         for x in label2num:
             fout.write(x + '\n')
     print('Done!')
 
     random.shuffle(data)
 
-    # 原来的版本
-    # train_data = data[:int(train_data_percent*len(data))]
-    # dev_data = data[int(train_data_percent*len(data)):int((train_data_percent+dev_data_percent)*len(data))]
-    # test_data = data[int((train_data_percent+dev_data_percent)*len(data)):]
-
     # 测试集换成新的
     train_data = data[:int(train_data_percent*len(data))]
     dev_data = data[int(train_data_percent*len(data)):]
-    test_data = read_cnews_txt('../../cnews/cnews.test.txt')
+    test_data = read_cnews_txt('cnews/cnews.test.txt')
 
 
     print('\ndata size:',len(data))
@@ -180,15 +191,15 @@ def main():
     print('dev_data size:',len(dev_data))
     print('test_data size:',len(test_data))
     print('\nwriting train/dev/test data ...')
-    with open('train.txt', 'w') as fout:
+    with open('real/data/train.txt', 'w') as fout:
         for x, y in train_data:
             if len(x) > 2:
                 fout.write(x + '\t' + str(y) + '\n')
-    with open('dev.txt', 'w') as fout:
+    with open('real/data/dev.txt', 'w') as fout:
         for x, y in dev_data:
             if len(x) > 2:
                 fout.write(x + '\t' + str(y) + '\n')
-    with open('test.txt', 'w') as fout:
+    with open('real/data/test.txt', 'w') as fout:
         for x, y in test_data:
             if len(x) > 2:
                 fout.write(x + '\t' + str(y) + '\n')
