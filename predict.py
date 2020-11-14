@@ -353,11 +353,11 @@ def main():
 
 
 
-    # # predict_baseline 方法
+    # predict_baseline 方法
     # baseline_method(x, config, dataset)
 
     # predict_cut_paras 方法
-    cut_paras_method(x, config, dataset, type=3)
+    cut_paras_method(x, config, dataset, type=1)
 
 
 
